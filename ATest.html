@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Calc</title>
+</head>
+<body>
+    <div class="main-div-x">
+        <div class="calc-div-x">
+            <div class="input-div-x">
+                <input type="text" oninput="myfunc()" onchange="myfuncX()" id="calc-input-x" placeholder="0" name="input-str">
+            </div>
+        <div class="btns-div-x">
+            <button class="calc-btn-x">Inv</button>
+            <button class="calc-btn-x">Deg</button>
+            <button class="calc-btn-x" onclick="textX('!')">x!</button>
+            <button class="calc-btn-x" onclick="textX('(')">(</button>
+            <button class="calc-btn-x" onclick="textX(')')">)</button>
+            <button class="calc-btn-x" onclick="textC()">C</button>
+            <button class="calc-btn-x" onclick="textCX()"><-</button>
+        </div>
+        <div class="btns-div-x">
+            <button class="calc-btn-x" onclick="textX('abs(')">|x|</button>
+            <button class="calc-btn-x" onclick="textX('sin(')">sin</button>
+            <button class="calc-btn-x" onclick="textX('%')">%</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('7')">7</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('8')">8</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('9')">9</button>
+            <button class="calc-btn-x" onclick="textX('/')">/</button>
+        </div>
+        <div class="btns-div-x">
+            <button class="calc-btn-x" onclick="textX('log(')">log</button>
+            <button class="calc-btn-x" onclick="textX('cos(')">cos</button>
+            <button class="calc-btn-x" onclick="textX('sqrt(')">sqrt</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('4')">4</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('5')">5</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('6')">6</button>
+            <button class="calc-btn-x" onclick="textX('*')">x</button>
+        </div>
+        <div class="btns-div-x">
+            <button class="calc-btn-x" onclick="textX('^')">^</button>
+            <button class="calc-btn-x" onclick="textX('tan(')">tan</button>
+            <button class="calc-btn-x" onclick="textX('1/')">1/x</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('1')">1</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('2')">2</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('3')">3</button>
+            <button class="calc-btn-x" onclick="textX('-')">-</button>
+        </div>
+        <div class="btns-div-x">
+            <button class="calc-btn-x" onclick="textX('exp(')">Exp</button>
+            <button class="calc-btn-x" onclick="textX('pi')">pi</button>
+            <button class="calc-btn-x" onclick="textX('e')">e</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('0')">0</button>
+            <button class="calc-btn-x btn-gray" onclick="textX('.')">.</button>
+            <button class="calc-btn-x btn-blue" onclick="evaluateX()">=</button>
+            <button class="calc-btn-x" onclick="textX('+')">+</button>
+        </div>
+        </div>
+    </div>
+
+
+    <script>
+
+        var isError = false;
+
+        function myfunc(){
+            console.log(isError);
+            if(isError){
+                document.querySelector("#calc-input-x").value = "";
+                isError = false;
+            }
+        }
+
+        function myfuncX(){
+            console.log(isError);
+            if(isError){
+                document.querySelector("#calc-input-x").value = "";
+                isError = false;
+            }
+        }
+
+        function textX(value) {
+        const myinputfield = document.querySelector("#calc-input-x");
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", false, true);
+        myinputfield.dispatchEvent(evt);
+        myinputfield.value = myinputfield.value + value;
+        }
+
+        function textC() {
+        const myinputfield = document.querySelector("#calc-input-x");
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", false, true);
+        myinputfield.dispatchEvent(evt);
+        myinputfield.value = '';
+        }
+
+        function textCX() {
+        const myinputfield = document.querySelector("#calc-input-x");
+        var evt = document.createEvent("HTMLEvents");
+        evt.initEvent("change", false, true);
+        myinputfield.dispatchEvent(evt);
+            myinputfield.value = myinputfield.value.slice(0, -1);
+        }
+
+        function evaluateX(){
+            const myinputfieldValue = document.querySelector("#calc-input-x").value;
+            try{
+                var data = new FormData();
+              data.append('evalstr', myinputfieldValue);
+              fetch('/calc.php', {
+                method: "POST",
+                body: data
+              }).then(response => {
+                if(response.ok){
+                    response.json().then(data => {
+                        try{
+                            document.querySelector("#calc-input-x").value = data.result2;
+                            if(document.querySelector("#calc-input-x").value == 'undefined'){
+                                document.querySelector("#calc-input-x").value = 'Error';
+                                isError = true;
+                            }
+                        }
+                        catch{
+                            document.querySelector("#calc-input-x").value = data.error;
+                            
+                        }
+                    });
+                }
+              });
+            }
+            catch{
+                document.querySelector("#calc-input-x").value = "Error!";
+            }
+           
+        }
+
+    </script>
+</body>
+</html>
